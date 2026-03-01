@@ -382,27 +382,6 @@ h2.reveal.show::after {
   padding: 1rem;
 }
 
-.ability-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.9rem;
-}
-
-.ability-card {
-  font-weight: 700;
-  position: relative;
-  padding-left: 2.2rem;
-}
-
-.ability-card::before {
-  content: "✔";
-  position: absolute;
-  left: 0.95rem;
-  top: 1rem;
-  color: var(--primary);
-  font-weight: 900;
-}
-
 .burden-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -936,7 +915,6 @@ h2.reveal.show::after {
   .hero-grid,
   .grid-2,
   .grid-3,
-  .ability-grid,
   .burden-grid,
   .solution-item,
   .point-grid,
