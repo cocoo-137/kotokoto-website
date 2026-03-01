@@ -184,6 +184,20 @@ img {
   grid-template-columns: 1.2fr 1fr;
 }
 
+.hero-single {
+  grid-template-columns: 1fr;
+  justify-items: center;
+}
+
+.hero-single > .reveal {
+  max-width: 900px;
+  text-align: center;
+}
+
+.hero-single .actions {
+  justify-content: center;
+}
+
 .hero h1 {
   margin: 0.4rem 0 0;
   line-height: 1.35;
