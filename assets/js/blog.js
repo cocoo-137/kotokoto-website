@@ -64,11 +64,19 @@
     return res.json();
   };
 
+  const normalizeType = (item) => String(item.type?.name || item.type || '').trim();
+  const isCaseType = (type) => ['授業支援', '自己探求', 'ワークショップ'].includes(type);
+
   const renderList = async () => {
     try {
       const limit = Number(listNode.dataset.limit || '12');
-      const json = await fetchJson(`${buildUrl()}?limit=${limit}&orders=-publishedAt`);
-      const items = Array.isArray(json.contents) ? json.contents : [];
+      const isTopPage = document.body.classList.contains('page-top');
+      const fetchLimit = isTopPage ? Math.max(limit * 4, 20) : limit;
+      const json = await fetchJson(`${buildUrl()}?limit=${fetchLimit}&orders=-publishedAt`);
+      const allItems = Array.isArray(json.contents) ? json.contents : [];
+      const items = (isTopPage
+        ? allItems.filter((item) => !isCaseType(normalizeType(item)))
+        : allItems).slice(0, limit);
 
       if (items.length === 0) {
         statusNode.textContent = '記事がありません。';

@@ -60,6 +60,7 @@
 - `--self-button-primary-hover`: `#C8661E`
 - `--self-button-secondary-text`: `#A75415`
 - `--self-button-secondary-border`: `#F0B98B`
+- `--self-accent-green`: `#93CB41`（白字テキストを載せる強調帯・告知バナー背景）
 
 ## 使用ルール
 
@@ -67,4 +68,3 @@
 - 授業支援ページは `--teachers-*` を優先
 - 自己探求ページは `--self-*` を優先
 - 共通コンポーネント（本文、罫線、ベース背景）は「共通カラー」を優先
-

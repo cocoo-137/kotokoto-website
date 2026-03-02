@@ -52,6 +52,7 @@ body.page-self {
   --bg-soft: #ffe9d5;
   --primary: #e67d2e;
   --primary-strong: #c8661e;
+  --self-accent-green: #93cb41;
   --line: #f5cfb0;
   --accent-rgb: 230, 125, 46;
   --hero-glow: #ffd8b5;
@@ -250,6 +251,38 @@ img {
 
 .hero p {
   color: var(--muted);
+}
+
+.adoption-banner {
+  margin-top: -0.6rem;
+  padding-bottom: 1.4rem;
+}
+
+.adoption-banner-inner {
+  background: var(--self-accent-green, #93cb41);
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.95rem 1.15rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: center;
+  box-shadow: 0 10px 22px rgba(147, 203, 65, 0.25);
+}
+
+.adoption-banner-label {
+  margin: 0;
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.adoption-banner-text {
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.65;
+  font-size: 1.02rem;
 }
 
 .badge {
@@ -912,6 +945,87 @@ h2.reveal.show::after {
   line-height: 1.5;
 }
 
+.case-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.case-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0;
+  overflow: hidden;
+}
+
+.case-link {
+  display: block;
+  height: 100%;
+}
+
+.case-image-wrap {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background: var(--pill-bg);
+}
+
+.case-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.case-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--pill-border);
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+}
+
+.case-body {
+  padding: 0.9rem 0.95rem 1rem;
+}
+
+.case-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.16rem 0.58rem;
+  background: rgba(var(--accent-rgb), 0.14);
+  color: var(--primary-strong);
+  font-size: 0.77rem;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.case-body h3 {
+  margin: 0;
+  font-size: 1.28rem;
+  line-height: 1.5;
+}
+
+.case-body p {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.case-more {
+  display: inline-block;
+  margin-top: 0.6rem;
+  font-weight: 800;
+  color: var(--primary-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .notice {
   border-left: 4px solid var(--primary);
   padding: 0.65rem 0.85rem;
@@ -1008,7 +1122,8 @@ h2.reveal.show::after {
   .point-grid,
   .voice-grid,
   .workshop-image-grid,
-  .blog-layout {
+  .blog-layout,
+  .case-list {
     grid-template-columns: 1fr;
   }
 
@@ -1042,5 +1157,16 @@ h2.reveal.show::after {
 
   .hero-nowrap {
     white-space: normal;
+  }
+
+  .adoption-banner {
+    margin-top: -0.25rem;
+    padding-bottom: 1rem;
+  }
+
+  .adoption-banner-inner {
+    grid-template-columns: 1fr;
+    gap: 0.45rem;
+    text-align: center;
   }
 }

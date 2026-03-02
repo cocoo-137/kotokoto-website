@@ -32,18 +32,29 @@
     </header>
 
     <main>
-      <section class="hero">
-        <div class="container hero-grid hero-single">
-          <div class="reveal">
-            <span class="badge">ことこと - 自己探求</span>
-            <h1>探究・対話・自己理解を育む教育支援サービス</h1>
-            <p>
-              「ことこと」は、音声感情解析技術を活用した、児童生徒の「自己認識・他者理解」を育むWEBサービスです。探究学習の時間や各教科等における探究的な学びを充実させ、「感情解析×自己探究」のアプローチにより「自分を知る」（自己探究）から始まる豊かな学びの循環を生み出します。感情への気づきを深め、他者理解や困難に立ち向かう力を育むことで、未来を生きる力、Well-beingを高める学びにつなげます。
-            </p>
-            <div class="actions">
-              <a class="btn btn-primary" href="contact.html">すぐ試してみる</a>
-              <a class="btn btn-line" href="contact.html">教育機関向けデモを依頼</a>
-            </div>
+      <section class="hero self-video-hero">
+        <div class="self-video-bg" aria-hidden="true">
+          <iframe
+            src="https://www.youtube.com/embed/YIJ3-v1Bw90?autoplay=1&mute=1&playsinline=1&loop=1&playlist=YIJ3-v1Bw90&controls=0&disablekb=1"
+            title="ことこと 自己探求イメージ動画"
+            loading="lazy"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+        </div>
+        <div class="self-video-shade" aria-hidden="true"></div>
+        <div class="container self-video-content">
+          <div class="self-video-logo-wrap reveal show">
+            <img src="assets/img/kotokoto_tankyu_logo.png" alt="ことこと 自己探求ロゴ" />
+          </div>
+        </div>
+      </section>
+
+      <section class="adoption-banner">
+        <div class="container">
+          <div class="adoption-banner-inner reveal show">
+            <p class="adoption-banner-label">【採択事業】</p>
+            <p class="adoption-banner-text">経産省未来の教室EOL 2024<br />探求・校務改革支援補助金2025</p>
           </div>
         </div>
       </section>
@@ -149,6 +160,13 @@
               </ul>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section class="section" id="cases-section" data-case-types="自己探求,ワークショップ" hidden>
+        <div class="container">
+          <h2 class="reveal">導入事例</h2>
+          <div class="case-list" id="case-list" data-limit="6"></div>
         </div>
       </section>
 
@@ -317,6 +335,8 @@
       </div>
     </footer>
 
+    <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/cases.js"></script>
   </body>
 </html>
