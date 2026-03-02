@@ -253,6 +253,58 @@ img {
   color: var(--muted);
 }
 
+.self-video-hero {
+  position: relative;
+  padding: 0;
+  min-height: clamp(360px, 62vw, 760px);
+  overflow: hidden;
+  background: #000;
+}
+
+.self-video-bg,
+.self-video-shade {
+  position: absolute;
+  inset: 0;
+}
+
+.self-video-bg iframe {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100vw;
+  height: 56.25vw;
+  min-width: 177.78vh;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: none;
+}
+
+.self-video-shade {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.12) 35%, rgba(0, 0, 0, 0.22) 100%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.08));
+}
+
+.self-video-content {
+  position: relative;
+  z-index: 1;
+  min-height: inherit;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: clamp(1.1rem, 3vw, 2rem);
+}
+
+.self-video-logo-wrap {
+  width: clamp(220px, 36vw, 520px);
+}
+
+.self-video-logo-wrap img {
+  width: 100%;
+  height: auto;
+}
+
 .adoption-banner {
   margin-top: -0.6rem;
   padding-bottom: 1.4rem;
@@ -283,6 +335,10 @@ img {
   font-weight: 700;
   line-height: 1.65;
   font-size: 1.02rem;
+  color: var(--primary);
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.45rem 0.8rem;
 }
 
 .badge {
@@ -1168,5 +1224,17 @@ h2.reveal.show::after {
     grid-template-columns: 1fr;
     gap: 0.45rem;
     text-align: center;
+  }
+
+  .self-video-hero {
+    min-height: clamp(300px, 72vw, 520px);
+  }
+
+  .self-video-content {
+    padding-top: 0.9rem;
+  }
+
+  .self-video-logo-wrap {
+    width: clamp(190px, 56vw, 320px);
   }
 }
