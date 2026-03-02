@@ -573,6 +573,34 @@ h2.reveal.show::after {
   writing-mode: horizontal-tb;
 }
 
+.solution-copy p + p {
+  margin-top: 0.9rem;
+}
+
+.page-self .solution-copy.tone-orange {
+  background: #e67d2e;
+  border-color: #e67d2e;
+  color: #fff;
+}
+
+.page-self .solution-copy.tone-green {
+  background: #93cb41;
+  border-color: #93cb41;
+  color: #fff;
+}
+
+.page-self .solution-copy.tone-orange h3,
+.page-self .solution-copy.tone-green h3,
+.page-self .solution-copy.tone-orange p,
+.page-self .solution-copy.tone-green p {
+  color: #fff;
+}
+
+.page-self .solution-copy.tone-orange .solution-no,
+.page-self .solution-copy.tone-green .solution-no {
+  color: rgba(255, 255, 255, 0.36);
+}
+
 .solution-visual {
   width: 100%;
   aspect-ratio: 16 / 10;
