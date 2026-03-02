@@ -23,6 +23,7 @@
   --nav-panel-bg: #fbfef5;
   --shadow: 0 14px 34px rgba(var(--accent-rgb), 0.12);
   --radius: 14px;
+  --accent-green: #93cb41;
 }
 
 body.page-teachers {
@@ -428,8 +429,16 @@ img {
   padding: 3.8rem 0;
 }
 
+#cases-section {
+  background: #fff;
+}
+
 .section-soft {
   background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+}
+
+.faq-section {
+  background: #fff;
 }
 
 .section h2 {
@@ -895,6 +904,51 @@ h2.reveal.show::after {
 .cta-box {
   text-align: center;
   padding: 1.8rem 1rem;
+}
+
+.beta-cta {
+  background: var(--accent-green);
+  border-color: transparent;
+  color: #fff;
+}
+
+.beta-cta h2,
+.beta-cta p {
+  color: #fff;
+}
+
+.beta-lead {
+  margin-bottom: 0.9rem;
+}
+
+.beta-points {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.beta-points li {
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.36);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.beta-cta .btn-line {
+  border-color: rgba(255, 255, 255, 0.65);
+  color: #fff;
+  background: transparent;
+}
+
+.beta-cta .btn-line:hover {
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .embed-box {

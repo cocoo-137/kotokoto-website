@@ -1,2 +1,6 @@
 .DS_Store
 **/.DS_Store
+assets/img/jugyo/*
+assets/img/tankyu/*
+!assets/img/jugyo/.gitkeep
+!assets/img/tankyu/.gitkeep

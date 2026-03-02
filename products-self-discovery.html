@@ -45,7 +45,7 @@
         <div class="self-video-shade" aria-hidden="true"></div>
         <div class="container self-video-content">
           <div class="self-video-logo-wrap reveal show">
-            <img src="assets/img/kotokoto_tankyu_logo.png" alt="ことこと 自己探求ロゴ" />
+            <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/kotokoto_tankyu_logo.png" alt="ことこと 自己探求ロゴ" />
           </div>
         </div>
       </section>
@@ -65,7 +65,7 @@
           <div class="burden-grid">
             <article class="card burden-card reveal">
               <div class="burden-illust-frame">
-                <img src="assets/img/tankyu_002.jpg" alt="健康観察に関する課題イメージ" loading="lazy" />
+                <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_002.jpg" alt="健康観察に関する課題イメージ" loading="lazy" />
               </div>
               <h3>アンケートの健康観察では不安</h3>
               <p>
@@ -74,7 +74,7 @@
             </article>
             <article class="card burden-card reveal">
               <div class="burden-illust-frame">
-                <img src="assets/img/tankyu_003.jpg" alt="探究授業の効果測定に関する課題イメージ" loading="lazy" />
+                <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_003.jpg" alt="探究授業の効果測定に関する課題イメージ" loading="lazy" />
               </div>
               <h3>探求授業の効果測定が難しい</h3>
               <p>
@@ -83,7 +83,7 @@
             </article>
             <article class="card burden-card reveal">
               <div class="burden-illust-frame">
-                <img src="assets/img/tankyu_004.jpg" alt="生徒ケアの連携に関する課題イメージ" loading="lazy" />
+                <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_004.jpg" alt="生徒ケアの連携に関する課題イメージ" loading="lazy" />
               </div>
               <h3>生徒のケアがチームでできない</h3>
               <p>
@@ -135,6 +135,13 @@
         </div>
       </section>
 
+      <section class="section" id="cases-section" data-case-types="自己探求,ワークショップ" hidden>
+        <div class="container">
+          <h2 class="reveal">導入事例</h2>
+          <div class="case-list" id="case-list" data-limit="6"></div>
+        </div>
+      </section>
+
       <section class="section section-soft">
         <div class="container">
           <h2 class="reveal">主な機能（β版ミニマム）</h2>
@@ -160,13 +167,6 @@
               </ul>
             </article>
           </div>
-        </div>
-      </section>
-
-      <section class="section" id="cases-section" data-case-types="自己探求,ワークショップ" hidden>
-        <div class="container">
-          <h2 class="reveal">導入事例</h2>
-          <div class="case-list" id="case-list" data-limit="6"></div>
         </div>
       </section>
 
@@ -264,13 +264,13 @@
               <h3 class="workshop-head">ワークショップの様子</h3>
               <div class="workshop-image-grid">
                 <div class="workshop-image-frame">
-                  <img src="assets/img/tankyu_005.jpg" alt="ワークショップの様子1" loading="lazy" />
+                  <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_005.jpg" alt="ワークショップの様子1" loading="lazy" />
                 </div>
                 <div class="workshop-image-frame">
-                  <img src="assets/img/tankyu_006.jpg" alt="ワークショップの様子2" loading="lazy" />
+                  <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_006.jpg" alt="ワークショップの様子2" loading="lazy" />
                 </div>
                 <div class="workshop-image-frame">
-                  <img src="assets/img/tankyu_007.jpg" alt="ワークショップの様子3" loading="lazy" />
+                  <img src="https://kotokoto-website-public.s3.ap-northeast-1.amazonaws.com/assets/img/tankyu/tankyu_007.jpg" alt="ワークショップの様子3" loading="lazy" />
                 </div>
               </div>
             </div>
@@ -282,7 +282,7 @@
         </div>
       </section>
 
-      <section class="section section-soft">
+      <section class="section faq-section">
         <div class="container">
           <h2 class="reveal">よくある質問</h2>
           <div class="faq-list">
@@ -307,14 +307,22 @@
       </section>
 
       <section class="section">
-        <div class="container cta-box reveal">
+        <div class="container">
+          <h2 class="reveal">お知らせ</h2>
+          <div class="notice" id="notice-status">記事を読み込み中です...</div>
+          <div class="blog-list" id="notice-list" data-category-id="ogf3xk90bq"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container cta-box beta-cta reveal">
           <h2>β版ご利用案内</h2>
-          <p>現在、教育現場向けに β版を提供中です。</p>
-          <div class="pills" style="justify-content:center; margin:1rem 0;">
-            <span class="pill">現場検証目的</span>
-            <span class="pill">無料利用可（※条件により）</span>
-            <span class="pill">ご意見歓迎</span>
-          </div>
+          <p class="beta-lead">現在、教育現場向けにβ版を提供中です。</p>
+          <ul class="beta-points" aria-label="β版提供内容">
+            <li>現場検証目的</li>
+            <li>無料利用可（※条件により）</li>
+            <li>ご意見歓迎</li>
+          </ul>
           <div class="actions" style="justify-content:center;">
             <a class="btn btn-primary" href="contact.html">すぐ試してみる</a>
             <a class="btn btn-line" href="contact.html">教育機関向けデモを依頼</a>
@@ -337,6 +345,7 @@
 
     <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
+    <script src="assets/js/notices.js"></script>
     <script src="assets/js/cases.js"></script>
   </body>
 </html>
