@@ -6,7 +6,7 @@
 
 - `index.html`: トップページ
 - `products-teachers.html`: 商品1「ことこと - 授業支援」
-- `products-self-discovery.html`: 商品2「ことこと - 自己探求」
+- `products-self-discovery.html`: 商品2「ことこと - 感情解析」
 - `blog.html`: ブログ一覧（microCMS連携）
 - `blog-post.html`: ブログ詳細（microCMS連携）
 - `contact.html`: お問い合わせ（外部フォーム埋め込み）

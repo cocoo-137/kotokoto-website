@@ -40,6 +40,12 @@
   };
 
   const normalizeType = (item) => String(item.type?.name || item.type || '').trim();
+  const isTypeMatch = (itemType, targetTypes) => {
+    if (targetTypes.includes(itemType)) return true;
+    if (itemType === '自己探求' && targetTypes.includes('感情解析')) return true;
+    if (itemType === '感情解析' && targetTypes.includes('自己探求')) return true;
+    return false;
+  };
 
   const fetchJson = async (url) => {
     const res = await fetch(url, {
@@ -58,7 +64,9 @@
       const limit = Math.max(Number(listNode.dataset.limit || '6'), 1);
       const json = await fetchJson(`${buildUrl()}?limit=50&orders=-publishedAt`);
       const items = Array.isArray(json.contents) ? json.contents : [];
-      const filtered = items.filter((item) => types.includes(normalizeType(item))).slice(0, limit);
+      const filtered = items
+        .filter((item) => isTypeMatch(normalizeType(item), types))
+        .slice(0, limit);
 
       if (filtered.length === 0) {
         sectionNode.hidden = true;

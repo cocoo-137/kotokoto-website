@@ -58,11 +58,14 @@
       case '授業改善':
         return 'is-class-improvement';
       case '自己探求':
+      case '感情解析':
         return 'is-self-discovery';
       default:
         return 'is-default';
     }
   };
+
+  const categoryLabel = (category) => (category === '自己探求' ? '感情解析' : category);
 
   const fetchJson = async (url) => {
     const res = await fetch(url, {
@@ -118,7 +121,9 @@
       const desc = stripHtml(item.description || item.excerpt || item.content || item.body || '');
       const excerpt = desc.length > 120 ? `${desc.slice(0, 120)}...` : desc;
       const categoryTag = itemCategory
-        ? `<span class="category-badge ${categoryClassName(itemCategory)}">${escapeHtml(itemCategory)}</span>`
+        ? `<span class="category-badge ${categoryClassName(itemCategory)}">${escapeHtml(
+            categoryLabel(itemCategory)
+          )}</span>`
         : '';
 
       listNode.innerHTML = `

@@ -46,11 +46,14 @@
       case '授業改善':
         return 'is-class-improvement';
       case '自己探求':
+      case '感情解析':
         return 'is-self-discovery';
       default:
         return 'is-default';
     }
   };
+
+  const categoryLabel = (category) => (category === '自己探求' ? '感情解析' : category);
 
   const fetchJson = async (url) => {
     const res = await fetch(url, {
@@ -65,7 +68,7 @@
   };
 
   const normalizeType = (item) => String(item.type?.name || item.type || '').trim();
-  const isCaseType = (type) => ['授業支援', '自己探求', 'ワークショップ'].includes(type);
+  const isCaseType = (type) => ['授業支援', '自己探求', '感情解析', 'ワークショップ'].includes(type);
 
   const renderList = async () => {
     try {
@@ -92,7 +95,9 @@
           const category = String(item.category?.name || item.category || '').trim();
           const date = formatDate(item.publishedAt || item.createdAt);
           const categoryTag = category
-            ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(category)}</span>`
+            ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(
+                categoryLabel(category)
+              )}</span>`
             : '';
           return `
             <a class="blog-card blog-card-link" href="blog-post.html?id=${item.id}" aria-label="${title}">
@@ -123,7 +128,9 @@
       const body = item.content || item.body || '<p>本文がありません。</p>';
       const category = String(item.category?.name || item.category || '').trim();
       const categoryTag = category
-        ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(category)}</span>`
+        ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(
+            categoryLabel(category)
+          )}</span>`
         : '';
 
       document.title = `${escapeHtml(title)} | ことことブログ`;
