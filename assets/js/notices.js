@@ -14,6 +14,9 @@
     statusNode.textContent = 'カテゴリIDが未設定です。';
     return;
   }
+  const limit = Math.max(Number(listNode.dataset.limit || '5'), 1);
+  const noticeStyle = String(listNode.dataset.noticeStyle || '').trim();
+  const useSimpleStyle = noticeStyle === 'simple';
 
   const categoriesModel = cfg.categoriesModel || 'kotokoto-categories';
 
@@ -85,54 +88,115 @@
     }
   };
 
-  const fetchLatestByCategory = async (id, categoryName = '') => {
+  const canonicalType = (value) => {
+    if (value === '授業支援') return '授業改善';
+    if (value === '自己探求') return '感情解析';
+    return value;
+  };
+
+  const splitTypeValues = (raw) =>
+    String(raw || '')
+      .split(/[、,]/)
+      .map((part) => canonicalType(String(part).trim()))
+      .filter(Boolean);
+
+  const normalizeTypeList = (value) => {
+    if (Array.isArray(value)) {
+      return [...new Set(value.flatMap((entry) => splitTypeValues(entry?.name || entry?.value || entry)))];
+    }
+    return [...new Set(splitTypeValues(value?.name || value?.value || value))];
+  };
+  const datasetAllowedTypes = normalizeTypeList(listNode.dataset.noticeTypes || '');
+
+  const getItemTypes = (item) => {
+    const fromItem = normalizeTypeList(item?.type);
+    if (fromItem.length > 0) return fromItem;
+    return normalizeTypeList(item?.category?.type);
+  };
+
+  const isVisibleOnCurrentPage = (item) => {
+    if (datasetAllowedTypes.length === 0) return true;
+    const types = getItemTypes(item);
+    if (types.length === 0) return false;
+    return types.some((type) => datasetAllowedTypes.includes(type));
+  };
+
+  const fetchItemsByCategory = async (id, categoryName = '') => {
+    const merged = [];
+    const seen = new Set();
+    const appendVisible = (items) => {
+      if (!Array.isArray(items)) return;
+      items.forEach((item) => {
+        if (!item || !item.id || seen.has(item.id) || !isVisibleOnCurrentPage(item)) return;
+        seen.add(item.id);
+        merged.push(item);
+      });
+    };
+
     // 1) category参照フィールドをIDで絞り込み
     const byId = await fetchJson(
-      buildBlogsUrl(`filters=category[equals]${encodeURIComponent(id)}&limit=1&orders=-publishedAt`)
+      buildBlogsUrl(`filters=category[equals]${encodeURIComponent(id)}&limit=30&orders=-publishedAt`)
     );
-    const fromId = Array.isArray(byId.contents) ? byId.contents[0] : null;
-    if (fromId) return fromId;
+    appendVisible(byId.contents);
 
     // 2) 参照ではなく文字列カテゴリの場合のフォールバック
     if (categoryName) {
       const byName = await fetchJson(
         buildBlogsUrl(
-          `filters=category[contains]${encodeURIComponent(categoryName)}&limit=1&orders=-publishedAt`
+          `filters=category[contains]${encodeURIComponent(categoryName)}&limit=30&orders=-publishedAt`
         )
       );
-      return Array.isArray(byName.contents) ? byName.contents[0] : null;
+      appendVisible(byName.contents);
     }
 
-    return null;
+    return merged.slice(0, limit);
   };
 
   const render = async () => {
     try {
       const categoryData = await fetchCategory(categoryId);
       const categoryName = String(categoryData?.name || '').trim();
-      const item = await fetchLatestByCategory(categoryId, categoryName);
-      if (!item) {
+      const items = await fetchItemsByCategory(categoryId, categoryName);
+      if (items.length === 0) {
         statusNode.textContent = '記事がありません。';
         return;
       }
-      const title = escapeHtml(item.title || 'タイトル未設定');
-      const itemCategory = String(item.category?.name || item.category || '').trim();
-      const date = formatDate(item.publishedAt || item.createdAt);
-      const desc = stripHtml(item.description || item.excerpt || item.content || item.body || '');
-      const excerpt = desc.length > 120 ? `${desc.slice(0, 120)}...` : desc;
-      const categoryTag = itemCategory
-        ? `<span class="category-badge ${categoryClassName(itemCategory)}">${escapeHtml(
-            categoryLabel(itemCategory)
-          )}</span>`
-        : '';
+      listNode.classList.toggle('notice-simple-list', useSimpleStyle);
+      listNode.innerHTML = items
+        .map((item) => {
+          const title = escapeHtml(item.title || 'タイトル未設定');
+          const date = formatDate(item.publishedAt || item.createdAt);
+          if (useSimpleStyle) {
+            return `
+              <a class="notice-simple-item" href="blog-post.html?id=${encodeURIComponent(item.id)}" aria-label="${title}">
+                <time class="notice-simple-date" datetime="${escapeHtml(item.publishedAt || item.createdAt || '')}">${date}</time>
+                <span class="notice-simple-title">${title}</span>
+                <span class="notice-simple-arrow" aria-hidden="true">›</span>
+              </a>
+            `;
+          }
 
-      listNode.innerHTML = `
-        <a class="blog-card blog-card-link" href="blog-post.html?id=${encodeURIComponent(item.id)}" aria-label="${title}">
-          <p class="blog-meta">${date}${categoryTag ? ` ${categoryTag}` : ''}</p>
-          <h3>${title}</h3>
-          ${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ''}
-        </a>
-      `;
+          const itemCategory = String(item.category?.name || item.category || '').trim();
+          const desc = stripHtml(item.description || item.excerpt || item.content || item.body || '');
+          const excerpt = desc.length > 120 ? `${desc.slice(0, 120)}...` : desc;
+          const typeTags = getItemTypes(item)
+            .map((type) => `<span class="category-badge is-self-discovery">${escapeHtml(type)}</span>`)
+            .join(' ');
+          const categoryTag = itemCategory
+            ? `<span class="category-badge ${categoryClassName(itemCategory)}">${escapeHtml(
+                categoryLabel(itemCategory)
+              )}</span>`
+            : '';
+
+          return `
+            <a class="blog-card blog-card-link" href="blog-post.html?id=${encodeURIComponent(item.id)}" aria-label="${title}">
+              <p class="blog-meta">${date}${categoryTag ? ` ${categoryTag}` : ''}${typeTags ? ` ${typeTags}` : ''}</p>
+              <h3>${title}</h3>
+              ${excerpt ? `<p>${escapeHtml(excerpt)}</p>` : ''}
+            </a>
+          `;
+        })
+        .join('');
       statusNode.style.display = 'none';
     } catch (error) {
       statusNode.textContent = `記事の取得に失敗しました (${error.message})。`;

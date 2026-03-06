@@ -54,6 +54,11 @@
   };
 
   const categoryLabel = (category) => (category === '自己探求' ? '感情解析' : category);
+  const pageTypeMap = {
+    top: ['全体'],
+    teachers: ['授業改善'],
+    self: ['感情解析', 'ワークショップ']
+  };
 
   const fetchJson = async (url) => {
     const res = await fetch(url, {
@@ -67,19 +72,53 @@
     return res.json();
   };
 
-  const normalizeType = (item) => String(item.type?.name || item.type || '').trim();
-  const isCaseType = (type) => ['授業支援', '自己探求', '感情解析', 'ワークショップ'].includes(type);
+  const canonicalType = (value) => {
+    if (value === '授業支援') return '授業改善';
+    if (value === '自己探求') return '感情解析';
+    return value;
+  };
+
+  const normalizeTypeList = (value) => {
+    if (Array.isArray(value)) {
+      return value
+        .map((entry) => canonicalType(String(entry?.name || entry?.value || entry || '').trim()))
+        .filter(Boolean);
+    }
+    const single = canonicalType(String(value?.name || value?.value || value || '').trim());
+    return single ? [single] : [];
+  };
+
+  const getItemTypes = (item) => {
+    const fromCategory = normalizeTypeList(item?.category?.type);
+    if (fromCategory.length > 0) return fromCategory;
+    return normalizeTypeList(item?.type);
+  };
+
+  const currentPage = () => {
+    if (document.body.classList.contains('page-top')) return 'top';
+    if (document.body.classList.contains('page-teachers')) return 'teachers';
+    if (document.body.classList.contains('page-self')) return 'self';
+    return '';
+  };
+
+  const isVisibleOnCurrentPage = (item) => {
+    const page = currentPage();
+    const allowedTypes = pageTypeMap[page];
+    if (!allowedTypes) return true;
+    const types = getItemTypes(item);
+    if (types.length === 0) return page === 'top';
+    return types.some((type) => allowedTypes.includes(type));
+  };
 
   const renderList = async () => {
     try {
       const limit = Number(listNode.dataset.limit || '12');
-      const isTopPage = document.body.classList.contains('page-top');
-      const fetchLimit = isTopPage ? Math.max(limit * 4, 20) : limit;
+      const listStyle = String(listNode.dataset.blogStyle || '').trim();
+      const useSimpleStyle = listStyle === 'simple';
+      const fetchLimit = Math.max(limit * 6, 30);
       const json = await fetchJson(`${buildUrl()}?limit=${fetchLimit}&orders=-publishedAt`);
       const allItems = Array.isArray(json.contents) ? json.contents : [];
-      const items = (isTopPage
-        ? allItems.filter((item) => !isCaseType(normalizeType(item)))
-        : allItems).slice(0, limit);
+      const items = allItems.filter(isVisibleOnCurrentPage).slice(0, limit);
 
       if (items.length === 0) {
         statusNode.textContent = '記事がありません。';
@@ -88,12 +127,23 @@
 
       statusNode.textContent = '';
       statusNode.style.display = 'none';
+      listNode.classList.toggle('notice-simple-list', useSimpleStyle);
       listNode.innerHTML = items
         .map((item) => {
           const title = escapeHtml(item.title || 'タイトル未設定');
+          const date = formatDate(item.publishedAt || item.createdAt);
+          if (useSimpleStyle) {
+            return `
+              <a class="notice-simple-item" href="blog-post.html?id=${item.id}" aria-label="${title}">
+                <time class="notice-simple-date" datetime="${escapeHtml(item.publishedAt || item.createdAt || '')}">${date}</time>
+                <span class="notice-simple-title">${title}</span>
+                <span class="notice-simple-arrow" aria-hidden="true">›</span>
+              </a>
+            `;
+          }
+
           const desc = escapeHtml(item.description || item.excerpt || '');
           const category = String(item.category?.name || item.category || '').trim();
-          const date = formatDate(item.publishedAt || item.createdAt);
           const categoryTag = category
             ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(
                 categoryLabel(category)
