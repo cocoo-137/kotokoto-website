@@ -252,6 +252,13 @@
           }
           if (useMediaStyle) {
             const imageUrl = item.eyecatch?.url || '';
+            const itemTypes = getItemTypes(item).filter((type) => type && type !== '全体');
+            const typeTags = itemTypes
+              .map(
+                (type) =>
+                  `<span class="type-badge ${typeClassName(type)}">${escapeHtml(typeLabel(type))}</span>`
+              )
+              .join('');
             const image = imageUrl
               ? `<img src="${escapeHtml(imageUrl)}" alt="${title}" loading="lazy" />`
               : '<div class="blog-media-thumb-placeholder" aria-hidden="true">NO IMAGE</div>';
@@ -259,6 +266,7 @@
               <a class="blog-media-item" href="${postHref}" aria-label="${title}">
                 <div class="blog-media-thumb">${image}</div>
                 <div class="blog-media-main">
+                  <p class="blog-media-types">${typeTags}</p>
                   <p class="blog-media-date">${date}</p>
                   <h3 class="blog-media-title">${title}</h3>
                 </div>
@@ -274,8 +282,16 @@
           const categoryTag = category
             ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(categoryLabel(category))}</span>`
             : '';
+          const itemTypes = getItemTypes(item).filter((type) => type && type !== '全体');
+          const typeTags = itemTypes
+            .map(
+              (type) =>
+                `<span class="type-badge ${typeClassName(type)}">${escapeHtml(typeLabel(type))}</span>`
+            )
+            .join('');
           return `
             <a class="blog-card blog-card-link" href="${postHref}" aria-label="${title}">
+              <p class="blog-types">${typeTags}</p>
               <p class="blog-meta">${date}${categoryTag ? ` ${categoryTag}` : ''}</p>
               <h3>${title}</h3>
               <p>${desc}</p>

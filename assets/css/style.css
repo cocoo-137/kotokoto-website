@@ -1190,6 +1190,14 @@ h2.reveal.show::after {
   gap: 0.45rem;
 }
 
+.blog-media-types {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 .blog-media-date {
   margin: 0;
   color: #118f76;
@@ -1325,6 +1333,14 @@ h2.reveal.show::after {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.blog-types {
+  margin: 0 0 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   flex-wrap: wrap;
 }
 
