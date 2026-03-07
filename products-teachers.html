@@ -31,10 +31,9 @@
             <a href="products-self-discovery.html">感情解析</a>
           </div>
         </div>
-          <a href="notice.html">お知らせ</a>
-          <a href="blog.html">ブログ</a>
           <a href="casestudy.html">事例</a>
-          <a href="contact.html">お問い合わせ</a>
+          <a href="blog.html">ブログ</a>
+          <a class="nav-contact-btn" href="contact.html">お問い合わせ</a>
         </nav>
       </div>
     </header>
@@ -290,6 +289,17 @@
 
       <section class="section">
         <div class="container">
+          <h2 class="reveal">ブログ</h2>
+          <div class="notice" id="blog-status">記事を読み込み中です...</div>
+          <div class="blog-list" id="blog-list" data-content-category="blog" data-type-filter="teachers" data-blog-style="media" data-limit="5"></div>
+          <div class="actions reveal">
+            <a class="btn btn-line" href="blog.html?type=teachers">すべて見る</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
           <h2 class="reveal">お知らせ</h2>
           <div class="notice" id="notice-status">記事を読み込み中です...</div>
           <div class="blog-list" id="notice-list" data-category-id="notice" data-notice-types="授業支援" data-notice-style="simple" data-limit="5"></div>
@@ -320,6 +330,7 @@
       <div class="container footer-grid">
         <small>© <span data-year></span> ことこと</small>
         <div class="footer-links">
+          <a href="notice.html">お知らせ</a>
           <a href="contact.html">お問い合わせ</a>
           <a href="https://www.137.co.jp/aboutus/" target="_blank" rel="noopener noreferrer">会社概要</a>
           <a href="terms.html">利用規約</a>
@@ -331,6 +342,7 @@
     <script src="assets/js/config.js"></script>
     <script src="assets/js/main.js"></script>
     <script src="assets/js/notices.js"></script>
+    <script src="assets/js/blog.js"></script>
     <script src="assets/js/cases.js"></script>
   </body>
 </html>

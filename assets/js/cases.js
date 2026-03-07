@@ -2,21 +2,40 @@
   const sectionNode = document.getElementById('cases-section');
   const listNode = document.getElementById('case-list');
   if (!sectionNode || !listNode) return;
+  const filterNode = document.getElementById('blog-category-filter');
 
   const cfg = window.KOTOKOTO_CONFIG?.microcms;
   if (!cfg?.baseUrl || !cfg?.contentModel || !cfg?.apiKey) return;
 
-  const types = String(sectionNode.dataset.caseTypes || '')
+  const fixedTypes = String(sectionNode.dataset.caseTypes || '')
     .split(',')
     .map((value) => value.trim())
     .filter(Boolean);
-  if (types.length === 0) return;
   const categoryId = String(sectionNode.dataset.categoryId || '').trim();
+  if (!categoryId) return;
+
+  const TYPE_FILTERS = {
+    all: { allowedTypes: [] },
+    teachers: { allowedTypes: ['授業改善'] },
+    self: { allowedTypes: ['感情解析', 'ワークショップ'] }
+  };
+
+  let currentTypeKey = 'all';
 
   const buildUrl = () => {
     const base = cfg.baseUrl.replace(/\/$/, '');
     const model = cfg.contentModel.replace(/^\//, '');
     return `${base}/${model}`;
+  };
+
+  const normalizeTypeKey = (value) => {
+    const key = String(value || '').trim();
+    return Object.prototype.hasOwnProperty.call(TYPE_FILTERS, key) ? key : 'all';
+  };
+
+  const readTypeKeyFromQuery = () => {
+    const params = new URLSearchParams(window.location.search);
+    return normalizeTypeKey(params.get('type') || params.get('category'));
   };
 
   const escapeHtml = (value) =>
@@ -64,10 +83,41 @@
 
   const normalizeType = (item) => getItemTypes(item)[0] || '';
   const isTypeMatch = (itemType, targetTypes) => {
+    if (targetTypes.length === 0) return true;
     if (targetTypes.includes(itemType)) return true;
     if (itemType === '自己探求' && targetTypes.includes('感情解析')) return true;
     if (itemType === '感情解析' && targetTypes.includes('自己探求')) return true;
     return false;
+  };
+
+  const activeTypes = () => {
+    if (filterNode) return TYPE_FILTERS[currentTypeKey].allowedTypes;
+    return fixedTypes;
+  };
+
+  const updateFilterUI = () => {
+    document.body?.setAttribute('data-type-theme', currentTypeKey);
+    if (!filterNode) return;
+    filterNode.querySelectorAll('[data-type], [data-category]').forEach((button) => {
+      const source = button.dataset.type || button.dataset.category;
+      const selected = normalizeTypeKey(source) === currentTypeKey;
+      button.classList.toggle('is-active', selected);
+      button.setAttribute('aria-selected', String(selected));
+    });
+  };
+
+  const updateTypeQuery = () => {
+    if (!filterNode) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set('type', currentTypeKey);
+    url.searchParams.delete('category');
+    history.replaceState({}, '', `${url.pathname}?${url.searchParams.toString()}`);
+  };
+
+  const buildPostHref = (itemId) => {
+    const params = new URLSearchParams({ id: String(itemId), contentCategory: categoryId });
+    if (filterNode) params.set('type', currentTypeKey);
+    return `blog-post.html?${params.toString()}`;
   };
 
   const fetchJson = async (url) => {
@@ -84,16 +134,16 @@
 
   const render = async () => {
     try {
+      updateFilterUI();
       const limit = Math.max(Number(listNode.dataset.limit || '6'), 1);
       const json = await fetchJson(`${buildUrl()}?limit=50&orders=-publishedAt`);
       const items = Array.isArray(json.contents) ? json.contents : [];
       const filtered = items
         .filter((item) => {
-          if (!categoryId) return true;
           const id = String(item?.category?.id || '').trim();
           return id === categoryId;
         })
-        .filter((item) => isTypeMatch(normalizeType(item), types))
+        .filter((item) => isTypeMatch(normalizeType(item), activeTypes()))
         .slice(0, limit);
 
       if (filtered.length === 0) {
@@ -113,7 +163,7 @@
 
           return `
             <article class="case-card reveal">
-              <a class="case-link" href="blog-post.html?id=${encodeURIComponent(item.id)}" aria-label="${title}">
+              <a class="case-link" href="${buildPostHref(item.id)}" aria-label="${title}">
                 <div class="case-image-wrap">
                   ${imageTag}
                 </div>
@@ -138,6 +188,17 @@
       sectionNode.hidden = true;
     }
   };
+
+  if (filterNode) {
+    currentTypeKey = readTypeKeyFromQuery();
+    filterNode.addEventListener('click', (event) => {
+      const button = event.target.closest('[data-type], [data-category]');
+      if (!button) return;
+      currentTypeKey = normalizeTypeKey(button.dataset.type || button.dataset.category);
+      updateTypeQuery();
+      render();
+    });
+  }
 
   render();
 })();

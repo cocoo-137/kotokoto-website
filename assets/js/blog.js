@@ -49,6 +49,7 @@
   };
 
   const getListContentCategory = () => normalizeContentCategory(listNode?.dataset.contentCategory || '');
+  const getListTypeFilter = () => normalizeTypeFilter(listNode?.dataset.typeFilter || 'all');
 
   const formatDate = (iso) => {
     if (!iso) return '-';
@@ -66,6 +67,12 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+
+  const stripHtml = (value) =>
+    String(value ?? '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
   const categoryClassName = (category) => {
     switch (category) {
@@ -151,8 +158,9 @@
   };
 
   const updateTypeFilterUI = (activeKey) => {
-    if (!filterNode) return;
     const key = normalizeTypeFilter(activeKey);
+    document.body?.setAttribute('data-type-theme', key);
+    if (!filterNode) return;
     filterNode.querySelectorAll('[data-type], [data-category]').forEach((button) => {
       const source = button.dataset.type || button.dataset.category;
       const selected = normalizeTypeFilter(source) === key;
@@ -183,18 +191,19 @@
       const limit = Number(listNode.dataset.limit || '12');
       const listStyle = String(listNode.dataset.blogStyle || '').trim();
       const useSimpleStyle = listStyle === 'simple';
-      const typeKey = getCurrentTypeFilter();
+      const useMediaStyle = listStyle === 'media';
+      const typeKey = filterNode ? getCurrentTypeFilter() : getListTypeFilter();
       const contentCategory = getListContentCategory();
-      const topPageScoped = !filterNode && document.body.classList.contains('page-top');
 
       updateTypeFilterUI(typeKey);
       const allItems = await fetchRecentItems(Math.max(limit * 6, 60), contentCategory);
       const items = allItems
         .filter((item) => isVisibleInTypeFilter(item, typeKey))
-        .filter((item) => (topPageScoped ? isVisibleOnTopPage(item) : true))
         .slice(0, limit);
 
       if (items.length === 0) {
+        listNode.innerHTML = '';
+        statusNode.style.display = '';
         statusNode.textContent = '記事がありません。';
         return;
       }
@@ -202,27 +211,47 @@
       statusNode.textContent = '';
       statusNode.style.display = 'none';
       listNode.classList.toggle('notice-simple-list', useSimpleStyle);
+      listNode.classList.toggle('blog-media-list', useMediaStyle);
       listNode.innerHTML = items
         .map((item) => {
           const title = escapeHtml(item.title || 'タイトル未設定');
           const date = formatDate(item.publishedAt || item.createdAt);
+          const postHref = buildPostHref(item.id, typeKey, contentCategory);
           if (useSimpleStyle) {
             return `
-              <a class="notice-simple-item" href="${buildPostHref(item.id, typeKey, contentCategory)}" aria-label="${title}">
+              <a class="notice-simple-item" href="${postHref}" aria-label="${title}">
                 <time class="notice-simple-date" datetime="${escapeHtml(item.publishedAt || item.createdAt || '')}">${date}</time>
                 <span class="notice-simple-title">${title}</span>
                 <span class="notice-simple-arrow" aria-hidden="true">›</span>
               </a>
             `;
           }
+          if (useMediaStyle) {
+            const imageUrl = item.eyecatch?.url || '';
+            const image = imageUrl
+              ? `<img src="${escapeHtml(imageUrl)}" alt="${title}" loading="lazy" />`
+              : '<div class="blog-media-thumb-placeholder" aria-hidden="true">NO IMAGE</div>';
+            return `
+              <a class="blog-media-item" href="${postHref}" aria-label="${title}">
+                <div class="blog-media-thumb">${image}</div>
+                <div class="blog-media-main">
+                  <p class="blog-media-date">${date}</p>
+                  <h3 class="blog-media-title">${title}</h3>
+                </div>
+                <span class="blog-media-arrow" aria-hidden="true">→</span>
+              </a>
+            `;
+          }
 
-          const desc = escapeHtml(item.description || item.excerpt || '');
+          const descRaw = item.description || item.excerpt || item.content || item.body || '';
+          const descPlain = stripHtml(descRaw);
+          const desc = escapeHtml(descPlain.length > 110 ? `${descPlain.slice(0, 110)}...` : descPlain);
           const category = String(item.category?.name || item.category || '').trim();
           const categoryTag = category
             ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(categoryLabel(category))}</span>`
             : '';
           return `
-            <a class="blog-card blog-card-link" href="${buildPostHref(item.id, typeKey, contentCategory)}" aria-label="${title}">
+            <a class="blog-card blog-card-link" href="${postHref}" aria-label="${title}">
               <p class="blog-meta">${date}${categoryTag ? ` ${categoryTag}` : ''}</p>
               <h3>${title}</h3>
               <p>${desc}</p>
@@ -231,6 +260,8 @@
         })
         .join('');
     } catch (e) {
+      listNode.innerHTML = '';
+      statusNode.style.display = '';
       statusNode.textContent = `記事の取得に失敗しました (${e.message})。contentModel または APIキーを確認してください。`;
     }
   };
