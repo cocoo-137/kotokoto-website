@@ -1253,7 +1253,7 @@ h2.reveal.show::after {
 
 .notice-simple-item {
   display: grid;
-  grid-template-columns: 160px 1fr auto;
+  grid-template-columns: 160px auto 1fr auto;
   align-items: center;
   gap: 1rem;
   padding: 1rem 0.5rem;
@@ -1268,16 +1268,27 @@ h2.reveal.show::after {
 }
 
 .notice-simple-date {
+  grid-column: 1 / 2;
   color: var(--muted);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
 
+.notice-simple-types {
+  grid-column: 2 / 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
 .notice-simple-title {
+  grid-column: 3 / 4;
   font-weight: 600;
 }
 
 .notice-simple-arrow {
+  grid-column: 4 / 5;
   color: #18b56b;
   font-size: 1.85rem;
   line-height: 1;
@@ -1343,6 +1354,34 @@ h2.reveal.show::after {
 }
 
 .category-badge.is-default {
+  background: #7f7f7f;
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.16rem 0.56rem;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.type-badge.is-education {
+  background: #4e80ee;
+}
+
+.type-badge.is-eq {
+  background: #e67d2e;
+}
+
+.type-badge.is-workshop {
+  background: #93cb41;
+}
+
+.type-badge.is-default {
   background: #7f7f7f;
 }
 
@@ -1665,12 +1704,16 @@ h2.reveal.show::after {
     font-size: 0.88rem;
   }
 
+  .notice-simple-types {
+    grid-column: 1 / 2;
+  }
+
   .notice-simple-title {
     grid-column: 1 / 2;
   }
 
   .notice-simple-arrow {
-    grid-row: 1 / 3;
+    grid-row: 1 / 4;
     grid-column: 2 / 3;
     font-size: 1.6rem;
   }

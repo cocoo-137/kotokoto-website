@@ -70,6 +70,21 @@
 
   const categoryLabel = (category) => category;
 
+  const typeClassName = (type) => {
+    switch (canonicalType(type)) {
+      case 'Education':
+        return 'is-education';
+      case 'EQ':
+        return 'is-eq';
+      case 'Workshop':
+        return 'is-workshop';
+      default:
+        return 'is-default';
+    }
+  };
+
+  const typeLabel = (type) => canonicalType(type);
+
   const fetchJson = async (url) => {
     const res = await fetch(url, {
       headers: {
@@ -168,9 +183,17 @@
           const title = escapeHtml(item.title || 'タイトル未設定');
           const date = formatDate(item.publishedAt || item.createdAt);
           if (useSimpleStyle) {
+            const typeTags = getItemTypes(item)
+              .filter((type) => type && type !== '全体')
+              .map(
+                (type) =>
+                  `<span class="type-badge ${typeClassName(type)}">${escapeHtml(typeLabel(type))}</span>`
+              )
+              .join('');
             return `
               <a class="notice-simple-item" href="blog-post.html?id=${encodeURIComponent(item.id)}" aria-label="${title}">
                 <time class="notice-simple-date" datetime="${escapeHtml(item.publishedAt || item.createdAt || '')}">${date}</time>
+                <span class="notice-simple-types">${typeTags}</span>
                 <span class="notice-simple-title">${title}</span>
                 <span class="notice-simple-arrow" aria-hidden="true">›</span>
               </a>

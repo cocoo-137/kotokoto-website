@@ -89,6 +89,21 @@
   };
   const categoryLabel = (category) => category;
 
+  const typeClassName = (type) => {
+    switch (canonicalType(type)) {
+      case 'Education':
+        return 'is-education';
+      case 'EQ':
+        return 'is-eq';
+      case 'Workshop':
+        return 'is-workshop';
+      default:
+        return 'is-default';
+    }
+  };
+
+  const typeLabel = (type) => canonicalType(type);
+
   const fetchJson = async (url) => {
     const res = await fetch(url, {
       headers: {
@@ -178,7 +193,8 @@
 
   const fetchRecentItems = async (limit = 200, contentCategory = '') => {
     const category = normalizeContentCategory(contentCategory);
-    const query = new URLSearchParams({ limit: String(Math.max(limit, 50)), orders: '-publishedAt' });
+    const safeLimit = Math.min(Math.max(limit, 50), 100);
+    const query = new URLSearchParams({ limit: String(safeLimit), orders: '-publishedAt' });
     if (category) {
       query.set('filters', `category[equals]${category}`);
     }
@@ -218,9 +234,17 @@
           const date = formatDate(item.publishedAt || item.createdAt);
           const postHref = buildPostHref(item.id, typeKey, contentCategory);
           if (useSimpleStyle) {
+            const itemTypes = getItemTypes(item).filter((type) => type && type !== '全体');
+            const typeTags = itemTypes
+              .map(
+                (type) =>
+                  `<span class="type-badge ${typeClassName(type)}">${escapeHtml(typeLabel(type))}</span>`
+              )
+              .join('');
             return `
               <a class="notice-simple-item" href="${postHref}" aria-label="${title}">
                 <time class="notice-simple-date" datetime="${escapeHtml(item.publishedAt || item.createdAt || '')}">${date}</time>
+                <span class="notice-simple-types">${typeTags}</span>
                 <span class="notice-simple-title">${title}</span>
                 <span class="notice-simple-arrow" aria-hidden="true">›</span>
               </a>
@@ -270,61 +294,78 @@
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     const typeKey = getCurrentTypeFilter();
+    updateTypeFilterUI(typeKey);
     const requestedContentCategory = normalizeContentCategory(params.get('contentCategory'));
     if (!id) {
       statusNode.textContent = '記事IDが指定されていません。';
       return;
     }
 
+    let item;
     try {
-      const item = await fetchJson(buildUrl(id));
-      const title = item.title || 'タイトル未設定';
-      const date = formatDate(item.publishedAt || item.createdAt);
-      const body = item.content || item.body || '<p>本文がありません。</p>';
-      const category = String(item.category?.name || item.category || '').trim();
-      const categoryTag = category
-        ? `<span class="category-badge ${categoryClassName(category)}">${escapeHtml(categoryLabel(category))}</span>`
-        : '';
-      const itemContentCategory = normalizeContentCategory(item?.category?.id || '');
-      const contentCategory = requestedContentCategory || itemContentCategory;
+      item = await fetchJson(buildUrl(id));
+    } catch (e) {
+      statusNode.textContent = `記事の取得に失敗しました (${e.message})。`;
+      return;
+    }
 
-      if (backLinkNode) backLinkNode.href = buildListHref(typeKey, contentCategory);
+    const title = item.title || 'タイトル未設定';
+    const date = formatDate(item.publishedAt || item.createdAt);
+    const body = item.content || item.body || '<p>本文がありません。</p>';
+    const itemTypes = getItemTypes(item).filter((type) => type && type !== '全体');
+    const visibleTypes =
+      itemTypes.length > 0
+        ? itemTypes
+        : typeKey === 'all'
+        ? []
+        : TYPE_FILTERS[typeKey].allowedTypes;
+    const typeTags = visibleTypes
+      .map(
+        (type) =>
+          `<span class="type-badge ${typeClassName(type)}">${escapeHtml(typeLabel(type))}</span>`
+      )
+      .join('');
+    const itemContentCategory = normalizeContentCategory(item?.category?.id || '');
+    const contentCategory = requestedContentCategory || itemContentCategory;
 
-      document.title = `${escapeHtml(title)} | ことことブログ`;
-      postNode.innerHTML = `
-        <p class="blog-meta">${date}${categoryTag ? ` ${categoryTag}` : ''}</p>
-        <h1>${escapeHtml(title)}</h1>
-        <div class="blog-post-content">${body}</div>
-      `;
+    if (backLinkNode) backLinkNode.href = buildListHref(typeKey, contentCategory);
 
+    document.title = `${escapeHtml(title)} | ことことブログ`;
+    postNode.innerHTML = `
+      <p class="blog-meta">${date}${typeTags ? ` ${typeTags}` : ''}</p>
+      <h1>${escapeHtml(title)}</h1>
+      <div class="blog-post-content">${body}</div>
+    `;
+
+    statusNode.textContent = '';
+    statusNode.style.display = 'none';
+
+    if (!postNavNode) return;
+    try {
       const allItems = await fetchRecentItems(300, contentCategory);
       const filtered = allItems.filter((entry) => isVisibleInTypeFilter(entry, typeKey));
       const currentIndex = filtered.findIndex((entry) => entry.id === id);
-      if (postNavNode) {
-        if (currentIndex === -1) {
-          postNavNode.innerHTML = '';
-        } else {
-          const prev = currentIndex > 0 ? filtered[currentIndex - 1] : null;
-          const next = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
-          const prevMarkup = prev
-            ? `<a class="btn btn-line" href="${buildPostHref(prev.id, typeKey, contentCategory)}">← 前の記事へ</a>`
-            : '<span class="btn btn-line is-disabled" aria-disabled="true">← 前の記事へ</span>';
-          const nextMarkup = next
-            ? `<a class="btn btn-line" href="${buildPostHref(next.id, typeKey, contentCategory)}">次の記事へ →</a>`
-            : '<span class="btn btn-line is-disabled" aria-disabled="true">次の記事へ →</span>';
-          postNavNode.innerHTML = `
-            <div class="actions">
-              ${prevMarkup}
-              ${nextMarkup}
-            </div>
-          `;
-        }
+      if (currentIndex === -1) {
+        postNavNode.innerHTML = '';
+        return;
       }
-
-      statusNode.textContent = '';
-      statusNode.style.display = 'none';
+      const prev = currentIndex > 0 ? filtered[currentIndex - 1] : null;
+      const next = currentIndex < filtered.length - 1 ? filtered[currentIndex + 1] : null;
+      const prevMarkup = prev
+        ? `<a class="btn btn-line" href="${buildPostHref(prev.id, typeKey, contentCategory)}">← 前へ</a>`
+        : '<span class="btn btn-line is-disabled" aria-disabled="true">← 前へ</span>';
+      const nextMarkup = next
+        ? `<a class="btn btn-line" href="${buildPostHref(next.id, typeKey, contentCategory)}">次へ →</a>`
+        : '<span class="btn btn-line is-disabled" aria-disabled="true">次へ →</span>';
+      postNavNode.innerHTML = `
+        <div class="actions">
+          ${prevMarkup}
+          ${nextMarkup}
+        </div>
+      `;
     } catch (e) {
-      statusNode.textContent = `記事の取得に失敗しました (${e.message})。`;
+      postNavNode.innerHTML = '';
+      console.warn('[blog] failed to fetch post navigation items:', e);
     }
   };
 
