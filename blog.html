@@ -24,9 +24,16 @@
         <button class="nav-toggle" type="button" data-nav-toggle>MENU</button>
         <nav class="site-nav" data-nav>
           <a href="index.html">ホーム</a>
-          <a href="products-teachers.html">授業支援</a>
-          <a href="products-self-discovery.html">感情解析</a>
+          <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button" data-products-toggle aria-expanded="false">プロダクト</button>
+          <div class="nav-dropdown-menu" data-products-menu>
+            <a href="products-teachers.html">授業支援</a>
+            <a href="products-self-discovery.html">感情解析</a>
+          </div>
+        </div>
+          <a href="notice.html">お知らせ</a>
           <a href="blog.html">ブログ</a>
+          <a href="casestudy.html">事例</a>
           <a href="contact.html">お問い合わせ</a>
         </nav>
       </div>
@@ -35,11 +42,16 @@
     <main class="section blog-page">
       <div class="container">
         <h1>ブログ</h1>
-        <p>最新のお知らせ、導入事例、教育現場での活用方法を掲載します。</p>
+        <p>カテゴリ「ブログ」の記事一覧です。</p>
+        <div class="blog-category-filter" id="blog-category-filter" role="tablist" aria-label="タイプ選択">
+          <button type="button" class="blog-filter-btn" data-type="all" role="tab" aria-selected="true">すべて</button>
+          <button type="button" class="blog-filter-btn" data-type="teachers" role="tab" aria-selected="false">授業支援</button>
+          <button type="button" class="blog-filter-btn" data-type="self" role="tab" aria-selected="false">感情解析</button>
+        </div>
 
         <section>
           <div class="notice" id="blog-status">記事を読み込み中です...</div>
-          <div class="blog-list" id="blog-list"></div>
+          <div class="blog-list" id="blog-list" data-content-category="blog"></div>
         </section>
       </div>
     </main>

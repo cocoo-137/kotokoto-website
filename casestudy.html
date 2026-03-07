@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>記事詳細 | ことこと</title>
+    <title>事例 | ことこと</title>
     <meta
       name="description"
-      content="ことことのブログ記事詳細ページです。"
+      content="ことことの事例一覧ページです。"
     />
     <meta name="robots" content="noindex, nofollow" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -39,14 +39,20 @@
       </div>
     </header>
 
-    <main class="section">
+    <main class="section blog-page">
       <div class="container">
-        <div class="notice" id="blog-status">記事を読み込み中です...</div>
-        <article class="blog-post" id="blog-post"></article>
-        <div class="blog-post-nav" id="blog-post-nav"></div>
-        <div class="actions" style="margin-top: 1rem;">
-          <a class="btn btn-line" id="blog-back-link" href="blog.html">← ブログ一覧に戻る</a>
+        <h1>事例</h1>
+        <p>カテゴリ「事例」の記事一覧です。</p>
+        <div class="blog-category-filter" id="blog-category-filter" role="tablist" aria-label="タイプ選択">
+          <button type="button" class="blog-filter-btn" data-type="all" role="tab" aria-selected="true">すべて</button>
+          <button type="button" class="blog-filter-btn" data-type="teachers" role="tab" aria-selected="false">授業支援</button>
+          <button type="button" class="blog-filter-btn" data-type="self" role="tab" aria-selected="false">感情解析</button>
         </div>
+
+        <section>
+          <div class="notice" id="blog-status">記事を読み込み中です...</div>
+          <div class="blog-list" id="blog-list" data-content-category="casestudy"></div>
+        </section>
       </div>
     </main>
 
