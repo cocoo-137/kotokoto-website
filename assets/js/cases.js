@@ -16,8 +16,8 @@
 
   const TYPE_FILTERS = {
     all: { allowedTypes: [] },
-    teachers: { allowedTypes: ['授業改善'] },
-    self: { allowedTypes: ['感情解析', 'ワークショップ'] }
+    teachers: { allowedTypes: ['Education'] },
+    self: { allowedTypes: ['EQ', 'Workshop'] }
   };
 
   let currentTypeKey = 'all';
@@ -60,8 +60,9 @@
   };
 
   const canonicalType = (value) => {
-    if (value === '授業支援') return '授業改善';
-    if (value === '自己探求') return '感情解析';
+    if (value === '授業支援' || value === '授業改善') return 'Education';
+    if (value === '自己探求' || value === '感情解析') return 'EQ';
+    if (value === 'ワークショップ') return 'Workshop';
     return value;
   };
 
@@ -84,10 +85,7 @@
   const normalizeType = (item) => getItemTypes(item)[0] || '';
   const isTypeMatch = (itemType, targetTypes) => {
     if (targetTypes.length === 0) return true;
-    if (targetTypes.includes(itemType)) return true;
-    if (itemType === '自己探求' && targetTypes.includes('感情解析')) return true;
-    if (itemType === '感情解析' && targetTypes.includes('自己探求')) return true;
-    return false;
+    return targetTypes.includes(itemType);
   };
 
   const activeTypes = () => {

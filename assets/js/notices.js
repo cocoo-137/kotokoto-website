@@ -58,17 +58,17 @@
     switch (category) {
       case 'お知らせ':
         return 'is-news';
-      case '授業改善':
+      case 'Education':
         return 'is-class-improvement';
-      case '自己探求':
-      case '感情解析':
+      case 'EQ':
+      case 'Workshop':
         return 'is-self-discovery';
       default:
         return 'is-default';
     }
   };
 
-  const categoryLabel = (category) => (category === '自己探求' ? '感情解析' : category);
+  const categoryLabel = (category) => category;
 
   const fetchJson = async (url) => {
     const res = await fetch(url, {
@@ -89,8 +89,9 @@
   };
 
   const canonicalType = (value) => {
-    if (value === '授業支援') return '授業改善';
-    if (value === '自己探求') return '感情解析';
+    if (value === '授業支援' || value === '授業改善') return 'Education';
+    if (value === '自己探求' || value === '感情解析') return 'EQ';
+    if (value === 'ワークショップ') return 'Workshop';
     return value;
   };
 
